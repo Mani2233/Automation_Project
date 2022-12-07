@@ -40,4 +40,19 @@ then
 cp /tmp/${name}-httpd-logs-${timestamp}.tar \
 s3://${s3bucket}/${name}-httpd-logs-${timestamp}.tar
 fi
+docroot="/var/www/html"
+if [ ! -f ${docroot}/inventory.html ]
+then
+        echo "<b>Log Type</b>&emsp;&emsp;<b>Time Created</b>&emsp;&emsp;<b>Type</b>&emsp;&emsp;<b>Size</b><br>" > ${docroot}/inventory.html
+fi
 
+if [[  -f ${docroot}/inventory.html ]]
+then
+        size=$(du -sh /tmp/${name}-httpd-logs-${timestamp}.tar | awk '{print $1}')
+        echo  "httpd-logs&emsp;&emsp;${timestamp}&emsp;&emsp;tar&emsp;&emsp;${size}<br>" >> ${docroot}/inventory.html
+fi
+
+if [ ! -f /etc/cron.d/automation ]
+then
+        echo "* * * * * root /root/Automation_Project/automation.sh" > /etc/cron.d/automation
+fi
